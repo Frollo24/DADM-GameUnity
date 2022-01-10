@@ -69,12 +69,11 @@ public class Fire : MonoBehaviour
         }
         vals /= 128.0f;
 
-        if (vals >= 0.01f)
+        if (vals >= 0.1f)
         {
             Debug.Log(vals);
             Destroy(gameObject);
         }
-        //gameObject.transform.localScale = new Vector3(1.0f + (vals * 10.0f), 1.0f, 1.0f);
     }
 
 
