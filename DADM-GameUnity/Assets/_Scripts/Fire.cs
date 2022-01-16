@@ -3,38 +3,22 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(BoxCollider2D))]
-[RequireComponent(typeof(AudioSource))]
 public class Fire : MonoBehaviour
 {
     [SerializeField] private Rigidbody2D _rigidbody2D;
 
-    private AudioSource _audioSource;
-    private string _selectedMic;
+    private AudioSource _micAudioSource;
 
     private PlayerController _player;
-    private float[] samples = new float[128];
 
     // Start is called before the first frame update
     void Start()
     {
         if (_rigidbody2D == null) _rigidbody2D = GetComponent<Rigidbody2D>();
-        
-        _audioSource = GetComponent<AudioSource>();
 
-        Debug.Log(Microphone.devices.Length);
+        _micAudioSource = MicController.audioSource;
 
-        if (Microphone.devices.Length > 0)
-        {
-            _selectedMic = Microphone.devices[0].ToString();
-        }
-        _audioSource.clip = Microphone.Start(_selectedMic, true, 100, AudioSettings.outputSampleRate);
-        _audioSource.loop = true;
-        while (!(Microphone.GetPosition(_selectedMic) > 0))
-        {
-            _audioSource.Play();
-        }
-
-        _player = FindObjectOfType<PlayerController>();
+        _player = PlayerController.playerController;
     }
 
     // Update is called once per frame
@@ -51,15 +35,9 @@ public class Fire : MonoBehaviour
 
     void GetOutputData()
     {
-        //BS avoiding 0 output from samples
-        foreach(var source in FindObjectsOfType<AudioSource>())
-        {
-            source.GetOutputData(samples, 0);
-            if (samples[0] != 0f)
-            {
-                break;
-            }
-        }
+        var samples = MicController.samples;
+
+        _micAudioSource.GetOutputData(samples, 0);
 
         float vals = 0.0f;
 
@@ -76,12 +54,12 @@ public class Fire : MonoBehaviour
         }
     }
 
-
+    //TODO create base class for all traps
     private void OnTriggerEnter2D(Collider2D other)
     {
         if (other.CompareTag("Player"))
         {
-            other.GetComponent<PlayerController>()?.TakeDeath();
+            PlayerController.playerController.TakeDeath();
         }
     }
 }

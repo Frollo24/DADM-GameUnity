@@ -12,7 +12,8 @@ public class UIMovementButton : MonoBehaviour, IPointerDownHandler
     // Start is called before the first frame update
     void Start()
     {
-        _playerController = FindObjectOfType<PlayerController>();
+        //TODO make this via events
+        _playerController = PlayerController.playerController;
     }
 
     // Update is called once per frame

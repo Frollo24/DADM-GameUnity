@@ -16,6 +16,13 @@ public class PlayerController : MonoBehaviour
 
     [SerializeField] private float _horizontalInputTouch, _verticalInputTouch;
 
+    public static PlayerController playerController;
+
+    private void Awake()
+    {
+        playerController = this;
+    }
+
     // Start is called before the first frame update
     void Start()
     {

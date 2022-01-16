@@ -34,11 +34,12 @@ public class Slicer : MonoBehaviour
             _rigidbody2D.velocity = _rigidbody2D.velocity.normalized * 6;
     }
 
+    //TODO create base class for all traps
     private void OnTriggerEnter2D(Collider2D other)
     {
         if (other.CompareTag("Player"))
         {
-            other.GetComponent<PlayerController>()?.TakeDeath();
+            PlayerController.playerController.TakeDeath();
         }
     }
 }
