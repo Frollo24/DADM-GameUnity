@@ -696,7 +696,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd880afade65a394ca8de912de63a884, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  direction: 2
+  direction: 4
   _playerController: {fileID: 0}
 --- !u!114 &307195239
 MonoBehaviour:
@@ -831,7 +831,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd880afade65a394ca8de912de63a884, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  direction: 3
+  direction: 8
   _playerController: {fileID: 0}
 --- !u!114 &308722548
 MonoBehaviour:
@@ -1731,7 +1731,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd880afade65a394ca8de912de63a884, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  direction: 1
+  direction: 2
   _playerController: {fileID: 0}
 --- !u!114 &686565675
 MonoBehaviour:
@@ -1866,7 +1866,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd880afade65a394ca8de912de63a884, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  direction: 0
+  direction: 1
   _playerController: {fileID: 0}
 --- !u!114 &692886113
 MonoBehaviour:
@@ -2938,9 +2938,8 @@ MonoBehaviour:
   _currentPos: {x: 0, y: 0}
   _targetPos: {x: 0, y: 0}
   _smoothness: 0.6
-  _controlType: 2
-  _horizontalInputTouch: 0
-  _verticalInputTouch: 0
+  _controlType: 1
+  _touchDirection: 0
 --- !u!61 &1795016591
 BoxCollider2D:
   m_ObjectHideFlags: 0

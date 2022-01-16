@@ -9,11 +9,14 @@ public class UIMovementButton : MonoBehaviour, IPointerDownHandler
 
     [SerializeField] private PlayerController _playerController;
 
+    public delegate void ButtonPressed(InputDirection direction);
+    public event ButtonPressed OnButtonPressed;
+
     // Start is called before the first frame update
     void Start()
     {
-        //TODO make this via events
         _playerController = PlayerController.playerController;
+        OnButtonPressed += _playerController.OnInputTouch;
     }
 
     // Update is called once per frame
@@ -24,11 +27,15 @@ public class UIMovementButton : MonoBehaviour, IPointerDownHandler
 
     public void OnPointerDown(PointerEventData eventData)
     {
-        _playerController.UpdateInputTouch(direction);
+        OnButtonPressed?.Invoke(direction);
     }
 }
 
 public enum InputDirection
 {
-    Up, Down, Right, Left
+    None = 0, 
+    Up = 1 << 0, 
+    Down = 1 << 1,
+    Right = 1 << 2, 
+    Left = 1 << 3
 }

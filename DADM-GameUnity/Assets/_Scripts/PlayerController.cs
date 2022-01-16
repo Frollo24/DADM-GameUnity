@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -9,12 +10,13 @@ public class PlayerController : MonoBehaviour
 
     private enum ControlType
     {
-        OneByOneKeyboard, PokemonLike, OneByOneTouch
+        PokemonLike, OneByOne
     }
 
-    [SerializeField] private ControlType _controlType = ControlType.OneByOneKeyboard;
-
-    [SerializeField] private float _horizontalInputTouch, _verticalInputTouch;
+    [SerializeField] private ControlType _controlType = ControlType.OneByOne;
+    [SerializeField] private InputDirection _touchDirection;
+    //TODO process input via command pattern
+    public void OnInputTouch(InputDirection input) => _touchDirection |= input;
 
     public static PlayerController playerController;
 
@@ -36,22 +38,15 @@ public class PlayerController : MonoBehaviour
     {
         switch (_controlType)
         {
-            case ControlType.OneByOneKeyboard:
-                OneByOneKeyboardMovement();
-                break;
             case ControlType.PokemonLike:
                 PokemonLikeTileMovementSmooth();
                 break;
-            case ControlType.OneByOneTouch:
-                OneByOneTouchMovement();
+            case ControlType.OneByOne:
+                OneByOneMovement();
                 break;
         }
 
         CheckPlayerOnTile();
-
-#if UNITY_EDITOR
-        OneByOneKeyboardMovement();
-#endif
     }
 
     private void CheckPlayerOnTile()
@@ -76,7 +71,7 @@ public class PlayerController : MonoBehaviour
 
         if (_targetPos == _currentPos)
         {
-            //Fixex floating point innacuracies
+            //Fixes floating point innacuracies
             transform.position = _targetPos;
             _prevPos = transform.position;
 
@@ -92,44 +87,22 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    private void OneByOneKeyboardMovement()
+    private void OneByOneMovement()
     {
         _currentPos = transform.position;
 
         if (_targetPos == _currentPos)
         {
-            //Fixex floating point innacuracies
+            //Fixes floating point innacuracies
             transform.position = _targetPos;
             _prevPos = transform.position;
 
-            //TODO change this to proper input from UI
             GetHorizontalInput(out float horizontal);
             GetVerticalInput(out float vertical);
 
             _targetPos = MoveIfAvailable(horizontal, vertical);
-        }
-        else
-        {
-            transform.position = Vector2.MoveTowards(transform.position, _targetPos, _smoothness);
-        }
-    }
-
-    private void OneByOneTouchMovement()
-    {
-        _currentPos = transform.position;
-
-        if (_targetPos == _currentPos)
-        {
-            //Fixex floating point innacuracies
-            transform.position = _targetPos;
-            _prevPos = transform.position;
-
-            if (_horizontalInputTouch != 0 || _verticalInputTouch != 0) 
-            {
-                _targetPos = MoveIfAvailable(_horizontalInputTouch, _verticalInputTouch);
-
-                _horizontalInputTouch = _verticalInputTouch = 0;
-            }
+            if(_touchDirection != InputDirection.None)
+                _touchDirection = InputDirection.None;
         }
         else
         {
@@ -140,11 +113,13 @@ public class PlayerController : MonoBehaviour
     private void GetHorizontalInput(out float horizontalInput)
     {
         horizontalInput = 0;
-        if (Input.GetKeyDown(KeyCode.RightArrow) || Input.GetKeyDown(KeyCode.D))
+        if (Input.GetKeyDown(KeyCode.RightArrow) || Input.GetKeyDown(KeyCode.D) 
+            || (_touchDirection & InputDirection.Right) != InputDirection.None)
         {
             horizontalInput += 1;
         }
-        if (Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.A))
+        if (Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.A) 
+            || (_touchDirection & InputDirection.Left) != InputDirection.None)
         {
             horizontalInput -= 1;
         }
@@ -153,35 +128,19 @@ public class PlayerController : MonoBehaviour
     private void GetVerticalInput(out float verticalInput)
     {
         verticalInput = 0;
-        if (Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.W))
+        if (Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.W)
+            || (_touchDirection & InputDirection.Up) != InputDirection.None)
         {
             verticalInput += 1;
         }
-        if (Input.GetKeyDown(KeyCode.DownArrow) || Input.GetKeyDown(KeyCode.S))
+        if (Input.GetKeyDown(KeyCode.DownArrow) || Input.GetKeyDown(KeyCode.S)
+            || (_touchDirection & InputDirection.Down) != InputDirection.None)
         {
             verticalInput -= 1;
         }
     }
 
-    public void UpdateInputTouch(InputDirection input)
-    {
-        switch (input)
-        {
-            case InputDirection.Up:
-                _verticalInputTouch = 1;
-                break;
-            case InputDirection.Down:
-                _verticalInputTouch = -1;
-                break;
-
-            case InputDirection.Right:
-                _horizontalInputTouch = 1;
-                break;
-            case InputDirection.Left:
-                _horizontalInputTouch = -1;
-                break;
-        }
-    }
+    
 
     private Vector2 MoveIfAvailable(float horizontal, float vertical)
     {
